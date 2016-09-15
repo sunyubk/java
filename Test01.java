@@ -9,3 +9,7 @@ public class Test01 {
 	}
 
 }
+
+
+
+var a ="cfl";
