@@ -1,4 +1,4 @@
-﻿package firstPaChong
+package com.sy.index;
 
 import java.io.*;
 import java.net.URL;
@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  * @author dingzhen
  *
  */
-public class firstPaChong{
+public class firstPaChong {
     //提取的数据存放到该目录下
     private static String savepath="C:/Users/孙宇/Desktop/test/";
     //等待爬取的url
@@ -46,7 +46,7 @@ public class firstPaChong{
         //workurl(strurl,1);
         addurl(strurl,0);
         for(int i=0;i<MAX_THREAD;i++){
-            new index().new MyThread().start();
+            new firstPaChong().new MyThread().start();
         }
     }
     /**
@@ -143,19 +143,25 @@ public class firstPaChong{
                     }
 //                    contentAfter+=matcher.group();
                 }
-                String regex2 = "<div id=\"nr1\">([^.])+</div>";//匹配正文的div
+                String regex2 = "<div id=\"nr1\">(.*?)</div>";//匹配正文的div
                 Pattern pattern2 = Pattern.compile(regex2);
                 Matcher matcher2 = pattern2.matcher(contentBefor);
                 while (matcher2.find()) {
                     //System.out.println("正文+++++++++"+matcher2.group());
-                    String reg = "[^\u4e00-\u9fa5]";//正则匹配非汉字的
-                    String content = matcher2.group().replaceAll(reg, "");//将非汉字的替换掉
-                    content = content.replaceAll("本章未完请点击下一页继续阅读","");//将多余的替换掉
+
+                    //String reg = "[^\u4e00-\u9fa5]";//正则匹配非汉字的,已废弃，整理后的标点符号全部丢失所以不用了
+                    String content = matcher2.group().replaceAll("<div id=\"nr1\">", "");//手动整理
+                    content = content.replaceAll("</div>","");
+                    content = content.replaceAll("<br/>","\r\n");
+                    content = content.replaceAll("-->>","");
+                    content = content.replaceAll("-->","");
+                    content = content.replaceAll("&nbsp;","");
+                    content = content.replaceAll("（本章未完，请点击下一页继续阅读）","");//将多余的替换掉
                     contentAfter+=content+"\r\n";//标题与正文的换行
                     contentBefor="";//清空之前的数据重新添加未筛选过得
                 }
-                System.out.println("contentBefor===="+contentBefor);
-                System.out.println("contentAfter===="+contentAfter);
+//                System.out.println("contentBefor===="+contentBefor);
+//                System.out.println("contentAfter===="+contentAfter);
 
 //                String regex = "<div id=\"nr1\">([^.])+</div>";//匹配正文的div
 //                Pattern pattern = Pattern.compile(regex);
