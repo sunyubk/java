@@ -21,7 +21,7 @@ public class firstPaChong {
     //记录所有url的深度进行爬取判断
     private static Map<String,Integer> allurldepth=new HashMap<String, Integer>();
     //爬取得深度
-    private static int maxdepth=99999;
+    private static int maxdepth=999999;
     //生命对象，帮助进行线程的等待操作
     private static Object obj=new Object();
     //记录总线程数5条
