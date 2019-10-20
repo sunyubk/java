@@ -1,11 +1,11 @@
-package com.sy.index;
-
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPInputStream;
+
 /**
  * 爬虫示例
  * @author dingzhen
@@ -21,7 +21,7 @@ public class firstPaChong {
     //记录所有url的深度进行爬取判断
     private static Map<String,Integer> allurldepth=new HashMap<String, Integer>();
     //爬取得深度
-    private static int maxdepth=999999;
+    private static int maxdepth=99999;
     //生命对象，帮助进行线程的等待操作
     private static Object obj=new Object();
     //记录总线程数5条
@@ -74,7 +74,15 @@ public class firstPaChong {
                 //一般按行读取网页数据，并进行内容分析
                 //因此用BufferedReader和InputStreamReader把字节流转化为字符流的缓冲流
                 //进行转换时，需要处理编码格式问题
-                BufferedReader br=new BufferedReader(new InputStreamReader(is,"gbk"));
+                GZIPInputStream gZIPInputStream = null;
+                BufferedReader br = null;
+                if (conn.getContentEncoding().equals("gzip")) {//gzip格式的网页处理
+                    gZIPInputStream = new GZIPInputStream(is);
+                    br=new BufferedReader(new InputStreamReader(gZIPInputStream,"utf-8"));
+                }else{
+                    br=new BufferedReader(new InputStreamReader(is,"gbk"));
+                }
+
 
                 //按行读取并打印
                 String line=null;
@@ -90,6 +98,7 @@ public class firstPaChong {
                     contentBefor += line;
                     //pw.println(line);//按行向文件中存入数据
                     Matcher m=p.matcher(line);
+                    boolean s = m.find();
                     while(m.find()){
                         String href=m.group();
                         //找到超链接地址并截取字符串
@@ -199,8 +208,8 @@ public class firstPaChong {
                 e.printStackTrace();
             }
             System.out.println("爬取结束.......");
-//            System.out.println("contentBefor===="+contentBefor);
-//            System.out.println("contentAfter===="+contentAfter);
+            System.out.println("contentBefor===="+contentBefor);
+            System.out.println("contentAfter===="+contentAfter);
         }
 
     }
